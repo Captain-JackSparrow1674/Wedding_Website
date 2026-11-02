@@ -5,21 +5,30 @@ import { WishesSection } from "@/components/wishes/WishesSection";
 import { GuestWishItem } from "@/lib/types";
 import { Crown, Heart, Sparkles, MessageCircleHeart } from "lucide-react";
 import { GoldDivider } from "@/components/common/GoldDivider";
+import { defaultWishes } from "@/lib/defaultData";
 
 export default async function GuestbookPage() {
-  const wishesDb = await prisma.guestWish.findMany({
-    where: { isApproved: true },
-    orderBy: { createdAt: "desc" },
-  });
+  let wishes: GuestWishItem[] = defaultWishes;
 
-  const wishes: GuestWishItem[] = wishesDb.map((w) => ({
-    id: w.id,
-    guestName: w.guestName,
-    message: w.message,
-    relation: w.relation,
-    isApproved: w.isApproved,
-    createdAt: w.createdAt.toISOString(),
-  }));
+  try {
+    const wishesDb = await prisma.guestWish.findMany({
+      where: { isApproved: true },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (wishesDb && wishesDb.length > 0) {
+      wishes = wishesDb.map((w) => ({
+        id: w.id,
+        guestName: w.guestName,
+        message: w.message,
+        relation: w.relation,
+        isApproved: w.isApproved,
+        createdAt: w.createdAt.toISOString(),
+      }));
+    }
+  } catch (error) {
+    console.warn("Using default wishes fallback during build/database init:", error);
+  }
 
   return (
     <main className="min-h-screen bg-[#FFF9F0] text-[#211A19]">

@@ -34,8 +34,7 @@ yarn-error.log*
 .env*
 !.env.example
 
-# database
-prisma/*.db
+# database (allow pre-seeded dev.db for zero-config Vercel deployment)
 prisma/*.db-journal
 prisma/*.db-shm
 prisma/*.db-wal

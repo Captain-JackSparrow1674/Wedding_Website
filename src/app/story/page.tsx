@@ -5,9 +5,29 @@ import { CoupleSection } from "@/components/couple/CoupleSection";
 import { GoldDivider } from "@/components/common/GoldDivider";
 import { Crown, Heart, Sparkles, MapPin, Calendar } from "lucide-react";
 import Link from "next/link";
+import { defaultSettings } from "@/lib/defaultData";
 
 export default async function StoryPage() {
-  const settings = await prisma.weddingSettings.findFirst();
+  let settings = defaultSettings;
+
+  try {
+    const settingsDb = await prisma.weddingSettings.findFirst();
+    if (settingsDb) {
+      settings = {
+        id: settingsDb.id,
+        brideName: settingsDb.brideName,
+        groomName: settingsDb.groomName,
+        brideParents: settingsDb.brideParents,
+        groomParents: settingsDb.groomParents,
+        weddingDate: settingsDb.weddingDate ? settingsDb.weddingDate.toISOString() : defaultSettings.weddingDate,
+        weddingCity: settingsDb.weddingCity,
+        heroTagline: settingsDb.heroTagline,
+        musicUrl: settingsDb.musicUrl,
+      };
+    }
+  } catch (error) {
+    console.warn("Using default settings fallback during build/database init:", error);
+  }
 
   return (
     <main className="min-h-screen bg-[#FFF9F0] text-[#211A19]">
