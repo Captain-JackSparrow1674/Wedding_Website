@@ -20,3 +20,4 @@ if (fs.existsSync(prismaDb) && !fs.existsSync(rootDb)) {
 } else {
   console.log('No existing dev.db found.');
 }
+
