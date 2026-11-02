@@ -8,26 +8,30 @@ import { defaultGallery } from "@/lib/defaultData";
 export default async function GalleryDedicatedPage() {
   let galleryImages: GalleryImageItem[] = defaultGallery;
 
-  try {
-    const galleryDb = await prisma.galleryImage.findMany({
-      orderBy: [{ isFeatured: "desc" }, { orderIndex: "asc" }],
-    });
+  const shouldQueryDb = !process.env.VERCEL || Boolean(process.env.DATABASE_URL);
 
-    if (galleryDb && galleryDb.length > 0) {
-      galleryImages = galleryDb.map((g) => ({
-        id: g.id,
-        title: g.title,
-        category: g.category,
-        imageUrl: g.imageUrl,
-        videoUrl: g.videoUrl,
-        mediaType: (g.mediaType as "image" | "video") || "image",
-        caption: g.caption,
-        isFeatured: g.isFeatured,
-        orderIndex: g.orderIndex,
-      }));
+  if (shouldQueryDb) {
+    try {
+      const galleryDb = await prisma.galleryImage.findMany({
+        orderBy: [{ isFeatured: "desc" }, { orderIndex: "asc" }],
+      });
+
+      if (galleryDb && galleryDb.length > 0) {
+        galleryImages = galleryDb.map((g) => ({
+          id: g.id,
+          title: g.title,
+          category: g.category,
+          imageUrl: g.imageUrl,
+          videoUrl: g.videoUrl,
+          mediaType: (g.mediaType as "image" | "video") || "image",
+          caption: g.caption,
+          isFeatured: g.isFeatured,
+          orderIndex: g.orderIndex,
+        }));
+      }
+    } catch {
+      // Graceful fallback to defaultGallery
     }
-  } catch (error) {
-    console.warn("Using default gallery fallback during build/database init:", error);
   }
 
   return (

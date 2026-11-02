@@ -292,3 +292,4 @@ export const defaultWishes: GuestWishItem[] = [
     createdAt: new Date().toISOString(),
   },
 ];
+

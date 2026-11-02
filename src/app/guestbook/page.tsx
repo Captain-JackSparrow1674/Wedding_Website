@@ -10,24 +10,28 @@ import { defaultWishes } from "@/lib/defaultData";
 export default async function GuestbookPage() {
   let wishes: GuestWishItem[] = defaultWishes;
 
-  try {
-    const wishesDb = await prisma.guestWish.findMany({
-      where: { isApproved: true },
-      orderBy: { createdAt: "desc" },
-    });
+  const shouldQueryDb = !process.env.VERCEL || Boolean(process.env.DATABASE_URL);
 
-    if (wishesDb && wishesDb.length > 0) {
-      wishes = wishesDb.map((w) => ({
-        id: w.id,
-        guestName: w.guestName,
-        message: w.message,
-        relation: w.relation,
-        isApproved: w.isApproved,
-        createdAt: w.createdAt.toISOString(),
-      }));
+  if (shouldQueryDb) {
+    try {
+      const wishesDb = await prisma.guestWish.findMany({
+        where: { isApproved: true },
+        orderBy: { createdAt: "desc" },
+      });
+
+      if (wishesDb && wishesDb.length > 0) {
+        wishes = wishesDb.map((w) => ({
+          id: w.id,
+          guestName: w.guestName,
+          message: w.message,
+          relation: w.relation,
+          isApproved: w.isApproved,
+          createdAt: w.createdAt.toISOString(),
+        }));
+      }
+    } catch {
+      // Graceful fallback to defaultWishes
     }
-  } catch (error) {
-    console.warn("Using default wishes fallback during build/database init:", error);
   }
 
   return (

@@ -10,23 +10,27 @@ import { defaultSettings } from "@/lib/defaultData";
 export default async function StoryPage() {
   let settings = defaultSettings;
 
-  try {
-    const settingsDb = await prisma.weddingSettings.findFirst();
-    if (settingsDb) {
-      settings = {
-        id: settingsDb.id,
-        brideName: settingsDb.brideName,
-        groomName: settingsDb.groomName,
-        brideParents: settingsDb.brideParents,
-        groomParents: settingsDb.groomParents,
-        weddingDate: settingsDb.weddingDate ? settingsDb.weddingDate.toISOString() : defaultSettings.weddingDate,
-        weddingCity: settingsDb.weddingCity,
-        heroTagline: settingsDb.heroTagline,
-        musicUrl: settingsDb.musicUrl,
-      };
+  const shouldQueryDb = !process.env.VERCEL || Boolean(process.env.DATABASE_URL);
+
+  if (shouldQueryDb) {
+    try {
+      const settingsDb = await prisma.weddingSettings.findFirst();
+      if (settingsDb) {
+        settings = {
+          id: settingsDb.id,
+          brideName: settingsDb.brideName,
+          groomName: settingsDb.groomName,
+          brideParents: settingsDb.brideParents,
+          groomParents: settingsDb.groomParents,
+          weddingDate: settingsDb.weddingDate ? settingsDb.weddingDate.toISOString() : defaultSettings.weddingDate,
+          weddingCity: settingsDb.weddingCity,
+          heroTagline: settingsDb.heroTagline,
+          musicUrl: settingsDb.musicUrl,
+        };
+      }
+    } catch {
+      // Graceful fallback to defaultSettings
     }
-  } catch (error) {
-    console.warn("Using default settings fallback during build/database init:", error);
   }
 
   return (
