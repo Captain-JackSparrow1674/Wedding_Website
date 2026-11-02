@@ -1,26 +1,174 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --royal-burgundy: #641C32;
+    --deep-maroon: #3B101F;
+    --champagne-gold: #D4AF75;
+    --gold-light: #F4E2BE;
+    --gold-dark: #A57D3E;
+    --ivory: #FFF9F0;
+    --warm-beige: #EDE0CD;
+    --dark-charcoal: #211A19;
+  }
+
+  body {
+    background-color: var(--ivory);
+    color: var(--dark-charcoal);
+    font-family: var(--font-body), system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom Typography & Font Classes */
+.font-royal {
+  font-family: var(--font-royal), 'Cinzel Decorative', 'Cinzel', 'Playfair Display', Georgia, serif;
+}
+
+.font-serif-luxury {
+  font-family: var(--font-serif), 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-body {
+  font-family: var(--font-body), 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+/* Luxury Royal Gold Gradients & Effects */
+.bg-gold-gradient {
+  background: linear-gradient(135deg, #F4E2BE 0%, #D4AF75 50%, #A57D3E 100%);
+}
+
+.bg-gold-radial {
+  background: radial-gradient(circle, #F4E2BE 0%, #D4AF75 60%, #9A7233 100%);
+}
+
+.text-gold-gradient {
+  background: linear-gradient(135deg, #F7E7CD 0%, #D4AF75 40%, #B88B42 80%, #F5E3C0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gold-shine {
+  background: linear-gradient(90deg, #D4AF75 0%, #FFF5E1 30%, #D4AF75 60%, #A57D3E 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 4s linear infinite;
+}
+
+.bg-royal-burgundy {
+  background-color: #641C32;
+}
+
+.bg-deep-maroon {
+  background-color: #3B101F;
+}
+
+.border-gold {
+  border-color: #D4AF75;
+}
+
+.border-gold-glow {
+  border-color: #D4AF75;
+  box-shadow: 0 0 15px rgba(212, 175, 117, 0.25);
+}
+
+.shadow-royal {
+  box-shadow: 0 10px 30px -5px rgba(59, 16, 31, 0.2), 0 0 15px rgba(212, 175, 117, 0.15);
+}
+
+.shadow-gold {
+  box-shadow: 0 8px 25px -4px rgba(212, 175, 117, 0.35);
+}
+
+/* Ornate Border & Frame */
+.royal-border-frame {
+  position: relative;
+  border: 1px solid rgba(212, 175, 117, 0.5);
+  box-shadow: inset 0 0 0 4px rgba(59, 16, 31, 0.05), inset 0 0 0 5px rgba(212, 175, 117, 0.3);
+}
+
+.royal-corner-ornament {
+  position: relative;
+}
+.royal-corner-ornament::before,
+.royal-corner-ornament::after {
+  content: "✦";
+  position: absolute;
+  color: #D4AF75;
+  font-size: 14px;
+}
+.royal-corner-ornament::before {
+  top: 6px;
+  left: 6px;
+}
+.royal-corner-ornament::after {
+  bottom: 6px;
+  right: 6px;
+}
+
+/* Royal Pattern Backgrounds */
+.bg-jaali-pattern {
+  background-color: #3B101F;
+  background-image: radial-gradient(rgba(212, 175, 117, 0.15) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.bg-ivory-damask {
+  background-color: #FFF9F0;
+  background-image: radial-gradient(#EDE0CD 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Animations */
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+.animate-float {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #3B101F;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4AF75;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #F4E2BE;
+}
+
+/* Print Styling for Invitation Pass */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
 }

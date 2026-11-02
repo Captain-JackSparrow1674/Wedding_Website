@@ -1,0 +1,142 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Admin {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("ADMIN") // SUPER_ADMIN, CONCIERGE, EVENT_PLANNER, ADMIN
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Guest {
+  id           String        @id @default(uuid())
+  name         String
+  email        String?
+  phone        String?
+  familyName   String?
+  guestLimit   Int           @default(2)
+  notes        String?
+  invitations  Invitation[]
+  rsvps        Rsvp[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Invitation {
+  id            String    @id @default(uuid())
+  guestId       String
+  guest         Guest     @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  token         String    @unique
+  customMessage String?
+  status        String    @default("PENDING") // PENDING, SENT, OPENED, RSVP_COMPLETED
+  openedAt      DateTime?
+  sentAt        DateTime?
+  rsvpAt        DateTime?
+  rsvps         Rsvp[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model WeddingEvent {
+  id               String      @id @default(uuid())
+  title            String
+  slug             String      @unique
+  ceremonyDate     DateTime
+  startTime        String
+  endTime          String
+  venueName        String
+  venueAddress     String
+  mapUrl           String?
+  description      String
+  dressCode        String
+  dressCodeColors  String?     // JSON or comma-separated colors
+  imageUrl         String
+  orderIndex       Int         @default(0)
+  rsvpEvents       RsvpEvent[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model Rsvp {
+  id                String       @id @default(uuid())
+  invitationId      String?
+  invitation        Invitation?  @relation(fields: [invitationId], references: [id], onDelete: SetNull)
+  guestId           String
+  guest             Guest        @relation(fields: [guestId], references: [id], onDelete: Cascade)
+  attending         Boolean      @default(true)
+  totalAttending    Int          @default(1)
+  dietaryPreference String?      // Vegetarian, Jain, Non-Veg, Vegan
+  allergies         String?
+  needsHotelStay    Boolean      @default(false)
+  needsShuttle      Boolean      @default(false)
+  songRequest       String?
+  specialRequests   String?
+  eventsAttending   RsvpEvent[]
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
+
+model RsvpEvent {
+  id             String       @id @default(uuid())
+  rsvpId         String
+  rsvp           Rsvp         @relation(fields: [rsvpId], references: [id], onDelete: Cascade)
+  weddingEventId String
+  weddingEvent   WeddingEvent @relation(fields: [weddingEventId], references: [id], onDelete: Cascade)
+  attending      Boolean      @default(true)
+  count          Int          @default(1)
+}
+
+model GalleryImage {
+  id          String   @id @default(uuid())
+  title       String
+  category    String   // couple, pre-wedding, haldi, mehendi, sangeet, wedding, reception, highlights
+  imageUrl    String
+  videoUrl    String?  // Optional video URL (YouTube, Vimeo, MP4)
+  mediaType   String   @default("image") // image | video
+  caption     String?
+  isFeatured  Boolean  @default(false)
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model GuestWish {
+  id         String   @id @default(uuid())
+  guestName  String
+  message    String
+  relation   String?  // Family, Friend, Colleague, Well-wisher
+  isApproved Boolean  @default(true)
+  createdAt  DateTime @default(now())
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  status    String   @default("UNREAD") // UNREAD, RESPONDED
+  createdAt DateTime @default(now())
+}
+
+model WeddingSettings {
+  id               String   @id @default("settings-1")
+  brideName        String   @default("Radhika")
+  groomName        String   @default("Devansh")
+  brideParents     String   @default("Smt. Sunita & Shri Vikramaditya Singhania")
+  groomParents     String   @default("Smt. Rajeshwari & Shri Mahendra Pratap Rathore")
+  weddingDate      DateTime
+  weddingCity      String   @default("Udaipur, Rajasthan")
+  heroTagline      String   @default("Together with our families, we invite you to celebrate our royal union")
+  musicUrl         String?  @default("https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b939db20.mp3?filename=indian-flute-and-sitar-ambient-110825.mp3")
+  updatedAt        DateTime @updatedAt
+}
